@@ -1,44 +1,46 @@
-# ADGM Corporate Agent (Take-home submission)
+# ADGM Corporate Agent — Take-home (with local RAG)
 
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)]<<(<https://classroom.github.com/a/vgbm4cZ0>)
+## Setup
 
-This project demonstrates a minimal ADGM-compliant document review agent:
+1. Open terminal and go to backend:
+cd backend
 
-## ADGM Corporate Agent — Take-home
+2. Install dependencies:
+npm install
 
-Simple Node.js backend demo that:
+3. Extract ADGM sources from the PDF:
 
-1. Accepts '.docx' uploads
-2. Identifies document types and checks against ADGM incorporation checklist
-3. Detects simple red flags (e.g., incorrect jurisdiction)
-4. Produces annotated .docx and a structured JSON report
+- ensure Data Sources.pdf is placed in backend/
 
-## Tech
+npm run extract-sources
 
-1. Node.js (Express) backend for parsing and annotation
-2. mammoth for .docx -> text
-3. docx for producing annotated .docx
-4. (Optional) RAG using embeddings + vector store for legal references
+This writes backend/adgm_sources/all_sources.txt
 
-## Run
+## Run server
 
-- cd backend
-- npm install
-- node server.js or npx nodemon server.js
-- POST files to /upload (form-data key docs)
+node server.js
+
+or for dev:
+npx nodemon server.js
 
 ## Test
 
-curl.exe -X POST <http://localhost:3000/upload> -F "docs=@sample_AoA.docx"
+- Upload sample docx:
+
+curl -X POST <http://localhost:3000/upload> -F "docs=@./sample_AoA.docx"
+
+- Response includes:
+
+JSON report with issues_found (and each issue has official_references if matches found)
+
+annotated_docx filename to download
 
 ## Download
 
-# In your folder
+curl.exe -O <http://localhost:3000/download/><annotated-filename.docx>
 
-curl.exe -O <http://localhost:3000/download/annotated-abc123.docx>
+## Notes
 
-# or open in browser
+Retrieval is local keyword-overlap based (fast, explainable).
 
-<http://localhost:3000/download/annotated-abc123.docx>
-
-Replace "annotated-abc123.docx" with the exact file name that your /upload response gave you.
+For a production RAG, use embeddings + vector DB and controlled LLM calls.
