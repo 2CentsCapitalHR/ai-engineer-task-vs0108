@@ -1,0 +1,6 @@
+Gradio
+
+streamlit
+pandas
+numpy
+docx
